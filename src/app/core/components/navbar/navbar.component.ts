@@ -1,16 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { ProfileService, UserProfile } from '../../services/profile.service';
 
 @Component({
 	selector: 'app-navbar',
 	standalone: true,
 	imports: [CommonModule, RouterLink, RouterLinkActive],
 	template: `
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <nav class="navbar navbar-expand-lg border-bottom py-3">
 		<div class="container-fluid px-4">
-			<a class="navbar-brand fw-bold" routerLink="/dashboard">ixcamper</a>
+			<a class="navbar-brand fw-bold text-primary" routerLink="/dashboard">ixcamper</a>
 			
 			<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#ixcamperNav">
 			<span class="navbar-toggler-icon"></span>
@@ -30,7 +31,7 @@ import { CommonModule } from '@angular/common';
     
     <span class="navbar-text text-white-50 small mb-2 mb-lg-0 me-lg-4 d-flex align-items-center">
       <i class="bi bi-person-circle me-2 fs-5 text-white-50"></i>
-      <span>Signed in as <strong class="text-white ms-1">{{ username() || 'Guest' }}</strong></span>
+      <span>Signed in as <strong class="text-white ms-1">{{ userProfile()?.username }}</strong></span>
     </span>
 
     <div class="vr d-none d-lg-block bg-white opacity-25 me-3" style="height: 20px;"></div>
@@ -44,10 +45,28 @@ import { CommonModule } from '@angular/common';
 	</nav>
   	`
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
 	private authService = inject(AuthService);
 	private router = inject(Router);
-	username = this.authService.currentUser;
+	private profileService = inject(ProfileService);
+	userProfile = signal<UserProfile | null>(null);
+
+	ngOnInit() {
+		// Only fetch if we are already logged in (have a token)
+		if (this.authService.isLoggedIn()) {
+			this.loadUserProfile();
+		}
+	}
+
+	loadUserProfile() {
+		this.profileService.getProfile().subscribe({
+			next: (data) => this.userProfile.set(data),
+			error: (err) => {
+				console.error('Navbar failed to load profile:', err);
+				// The Interceptor handles the 401 logout, so we just log the error here
+			}
+		});
+	}
 
 	onLogout() {
 		// 1. Clear LocalStorage/Session
@@ -55,4 +74,5 @@ export class NavbarComponent {
 		// 2. Redirect to Login
 		this.router.navigate(['/login']);
 	}
+
 }
