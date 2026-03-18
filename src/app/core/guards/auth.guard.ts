@@ -4,6 +4,8 @@ import { AuthService } from '../services/auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
 	const authService = inject(AuthService);
+	console.log('Guard Check - Is Logged In:', authService.isLoggedIn()); // Debug here
+	
 	const router = inject(Router);
 
 	// Check if token exists in local storage (via the service)
