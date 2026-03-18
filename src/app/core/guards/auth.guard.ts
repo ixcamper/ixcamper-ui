@@ -1,20 +1,37 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 export const authGuard: CanActivateFn = (route, state) => {
 	const authService = inject(AuthService);
-	console.log('Guard Check - Is Logged In:', authService.isLoggedIn()); // Debug here
-	
 	const router = inject(Router);
+	const token = localStorage.getItem('token');
 
-	// Check if token exists in local storage (via the service)
-	if (authService.isLoggedIn()) {
-		return true;
+	// 1. Basic Check: Does the token exist?
+	if (token) {
+		try {
+			// 2. Structural & Expiration Check
+			// This fails if you change even one character in the token
+			const decoded: any = jwtDecode(token);
+			const isExpired = decoded.exp * 1000 < Date.now();
+
+			if (!isExpired) {
+				return true; // Token is valid, proceed to the route
+			}
+
+			console.warn('Token has expired.');
+		} catch (error) {
+			console.error('Token is malformed or corrupted:', error);
+		}
 	}
 
-	// Not logged in: redirect to login and keep the attempted URL for later
-	console.warn('Unauthorized access attempt to:', state.url);
+	// 3. Cleanup & Redirect
+	// If we reach here, the token is missing, expired, or invalid
+	console.warn('Unauthorized access to:', state.url);
+	localStorage.removeItem('token');
+
+	// Redirect to login and save the URL the user was trying to reach
 	return router.createUrlTree(['/login'], {
 		queryParams: { returnUrl: state.url }
 	});
