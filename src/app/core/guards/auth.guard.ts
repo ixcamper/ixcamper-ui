@@ -1,37 +1,31 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { jwtDecode } from 'jwt-decode';
 
 export const authGuard: CanActivateFn = (route, state) => {
 	const authService = inject(AuthService);
 	const router = inject(Router);
-	const token = localStorage.getItem('token');
 
-	// 1. Basic Check: Does the token exist?
-	if (token) {
-		try {
-			// 2. Structural & Expiration Check
-			// This fails if you change even one character in the token
-			const decoded: any = jwtDecode(token);
-			const isExpired = decoded.exp * 1000 < Date.now();
+	console.log('--- 🛡️ GUARD CHECK START ---');
+	console.log('Attempting to access:', state.url);
 
-			if (!isExpired) {
-				return true; // Token is valid, proceed to the route
-			}
+	const isTokenValid = authService.isLoggedIn();
+	console.log('Is Token Valid (via AuthService)?', isTokenValid);
 
-			console.warn('Token has expired.');
-		} catch (error) {
-			console.error('Token is malformed or corrupted:', error);
-		}
+	if (isTokenValid) {
+		console.log('✅ ACCESS GRANTED');
+		console.log('--- 🛡️ GUARD CHECK END ---');
+		return true;
 	}
 
-	// 3. Cleanup & Redirect
-	// If we reach here, the token is missing, expired, or invalid
-	console.warn('Unauthorized access to:', state.url);
-	localStorage.removeItem('token');
+	// If we get here, the token failed validation
+	console.error('❌ ACCESS DENIED: Token is missing, expired, or tampered.');
+	console.log('--- 🛡️ GUARD CHECK END ---');
 
-	// Redirect to login and save the URL the user was trying to reach
+	// Clear the mess and send them home
+	localStorage.removeItem('token');
+	localStorage.removeItem('username');
+
 	return router.createUrlTree(['/login'], {
 		queryParams: { returnUrl: state.url }
 	});

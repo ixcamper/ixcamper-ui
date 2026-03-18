@@ -67,21 +67,33 @@ export class AuthService {
 	 * This is what your AuthGuard calls.
 	 */
 	public isLoggedIn(): boolean {
-		const token = this.tokenSignal();
+		const token = localStorage.getItem('token');
 		if (!token) return false;
 
 		try {
 			const decoded: any = jwtDecode(token);
-			const isExpired = decoded.exp * 1000 < Date.now();
+
+			// 1. Log the times to compare them in the console
+			const expiryTimeMs = decoded.exp * 1000;
+			const currentTimeMs = Date.now();
+
+			console.log('--- JWT DEBUG ---');
+			console.log('Raw Expiry (from JWT):', decoded.exp);
+			console.log('Expiry in MS:', new Date(expiryTimeMs).toLocaleString());
+			console.log('Current Time:', new Date(currentTimeMs).toLocaleString());
+
+			const isExpired = expiryTimeMs < currentTimeMs;
 
 			if (isExpired) {
-				this.logout(); // Cleanup if we find an expired token
+				console.warn('❌ Token is expired.');
 				return false;
 			}
+
+			// 2. Extra Safety: If we reach here, it's valid for the frontend
 			return true;
 		} catch (e) {
-			// This catches tampered/corrupted tokens (e.g., if you change a letter)
-			console.error('Invalid token structure detected');
+			// This ONLY runs if the Base64 structure is totally broken
+			console.error('❌ JWT structure is unreadable.');
 			return false;
 		}
 	}

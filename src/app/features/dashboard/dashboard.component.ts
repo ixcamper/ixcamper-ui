@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavbarComponent } from '../../core/components/navbar/navbar.component';
+import { ProfileService, UserProfile } from '../../core/services/profile.service';
 
 @Component({
 	selector: 'app-dashboard',
@@ -52,4 +53,14 @@ import { NavbarComponent } from '../../core/components/navbar/navbar.component';
   </div>
   `
 })
-export class DashboardComponent { }
+export class DashboardComponent implements OnInit {
+	private profileService = inject(ProfileService);
+	profile = signal<UserProfile | null>(null);
+
+	ngOnInit() {
+		this.profileService.getProfile().subscribe({
+			next: (data) => this.profile.set(data),
+			error: (err) => console.error('Dashboard failed to load profile:', err)
+		});
+	}
+}
