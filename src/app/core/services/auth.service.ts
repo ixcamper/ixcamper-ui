@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
+import { LoggerService } from './logger.service';
 
 interface LoginResponse {
 	token: string;
@@ -16,6 +17,7 @@ interface LoginResponse {
 export class AuthService {
 	private http = inject(HttpClient);
 	private router = inject(Router);
+	private logger = inject(LoggerService);
 	private readonly AUTH_URL = `${environment.gatewayUrl}/auth`;
 
 	// --- SIGNALS (The source of truth for your UI) ---
@@ -73,27 +75,23 @@ export class AuthService {
 		try {
 			const decoded: any = jwtDecode(token);
 
-			// 1. Log the times to compare them in the console
 			const expiryTimeMs = decoded.exp * 1000;
 			const currentTimeMs = Date.now();
 
-			console.log('--- JWT DEBUG ---');
-			console.log('Raw Expiry (from JWT):', decoded.exp);
-			console.log('Expiry in MS:', new Date(expiryTimeMs).toLocaleString());
-			console.log('Current Time:', new Date(currentTimeMs).toLocaleString());
+			this.logger.info('--- JWT DEBUG ---');
+			this.logger.info('Raw Expiry (from JWT):', decoded.exp);
+			this.logger.info('Expiry in MS:', new Date(expiryTimeMs).toLocaleString());
+			this.logger.info('Current Time:', new Date(currentTimeMs).toLocaleString());
 
 			const isExpired = expiryTimeMs < currentTimeMs;
 
 			if (isExpired) {
-				console.warn('❌ Token is expired.');
+				this.logger.warn('❌ Token is expired.');
 				return false;
 			}
-
-			// 2. Extra Safety: If we reach here, it's valid for the frontend
 			return true;
 		} catch (e) {
-			// This ONLY runs if the Base64 structure is totally broken
-			console.error('❌ JWT structure is unreadable.');
+			this.logger.error('❌ JWT structure is unreadable.');
 			return false;
 		}
 	}
@@ -128,7 +126,7 @@ export class AuthService {
 
 			if (timeLeft > 0) {
 				this.logoutTimer = setTimeout(() => {
-					console.warn('Session expired. Logging out.');
+					this.logger.warn('Session expired. Logging out.');
 					this.logout();
 				}, timeLeft);
 			} else {

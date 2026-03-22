@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../core/components/navbar/navbar.component';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../core/services/toast.service';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Component({
 	selector: 'app-settings',
@@ -65,10 +66,11 @@ import { ToastService } from '../../core/services/toast.service';
 })
 export class SettingsComponent {
 	private toast = inject(ToastService);
+	private logger = inject(LoggerService);
 
 	onSave() {
 		// Simulate an API call
-		console.log('Saving settings...');
+		this.logger.info('Saving settings...');
 
 		// Show the success toast
 		this.toast.show('Settings updated successfully!');

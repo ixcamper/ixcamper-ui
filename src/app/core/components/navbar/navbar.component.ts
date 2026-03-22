@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ProfileService, UserProfile } from '../../services/profile.service';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
 	selector: 'app-navbar',
@@ -49,6 +50,7 @@ export class NavbarComponent implements OnInit {
 	private authService = inject(AuthService);
 	private router = inject(Router);
 	private profileService = inject(ProfileService);
+	private logger = inject(LoggerService); 
 	userProfile = signal<UserProfile | null>(null);
 
 	ngOnInit() {
@@ -62,8 +64,7 @@ export class NavbarComponent implements OnInit {
 		this.profileService.getProfile().subscribe({
 			next: (data) => this.userProfile.set(data),
 			error: (err) => {
-				console.error('Navbar failed to load profile:', err);
-				// The Interceptor handles the 401 logout, so we just log the error here
+				this.logger.error('Failed to load user profile in Navbar', err);
 			}
 		});
 	}
