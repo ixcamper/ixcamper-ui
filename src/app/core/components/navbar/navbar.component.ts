@@ -58,7 +58,7 @@ import { LoggerService } from '../../services/logger.service';
 						></div>
 
 						<button
-							class="btn btn-outline-light btn-sm fw-bold px-3 shadow-sm"
+							class="btn btn-outline-light btn-sm fw-bold px-3 shadow-sm btn-logout"
 							(click)="onLogout()"
 						>
 							Logout
