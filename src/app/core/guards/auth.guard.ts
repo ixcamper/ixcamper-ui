@@ -29,6 +29,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 	localStorage.removeItem('username');
 
 	return router.createUrlTree(['/login'], {
-		queryParams: { returnUrl: state.url }
+		queryParams: { returnUrl: state.url },
 	});
 };

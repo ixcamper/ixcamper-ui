@@ -9,19 +9,19 @@ export const routes: Routes = [
 	// 2. Lazy Load (Dashboard is only loaded AFTER login + guard check)
 	{
 		path: 'dashboard',
-		loadComponent: () => import('./features/dashboard/dashboard.component')
-			.then(m => m.DashboardComponent),
-		canActivate: [authGuard]
+		loadComponent: () =>
+			import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+		canActivate: [authGuard],
 	},
 
 	// 3. Lazy Load Settings (Optional)
 	{
 		path: 'settings',
-		loadComponent: () => import('./features/settings/settings.component')
-			.then(m => m.SettingsComponent),
-		canActivate: [authGuard]
+		loadComponent: () =>
+			import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+		canActivate: [authGuard],
 	},
 
 	{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-	{ path: '**', redirectTo: '/dashboard' }
+	{ path: '**', redirectTo: '/dashboard' },
 ];

@@ -41,9 +41,9 @@ export class AuthService {
 	 * Authenticates the user and sets the session
 	 */
 	login(credentials: { username: string; password: string }): Observable<LoginResponse> {
-		return this.http.post<LoginResponse>(`${this.AUTH_URL}/token`, credentials).pipe(
-			tap((res) => this.setSession(res))
-		);
+		return this.http
+			.post<LoginResponse>(`${this.AUTH_URL}/token`, credentials)
+			.pipe(tap((res) => this.setSession(res)));
 	}
 
 	/**

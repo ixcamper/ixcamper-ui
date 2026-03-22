@@ -1,23 +1,23 @@
-[data-bs-theme="dark"] {
-  // The background of the entire page
-  --bs-body-bg: #12141d; 
-  
-  // The background for Cards and the Navbar
-  --bs-body-tertiary: #1b1e2b; 
-  --bs-secondary-bg: #1b1e2b;
+[data-bs-theme='dark'] {
+	// The background of the entire page
+	--bs-body-bg: #12141d;
 
-  // Borders (keep them subtle, not high-contrast)
-  --bs-border-color: #2d324a;
+	// The background for Cards and the Navbar
+	--bs-body-tertiary: #1b1e2b;
+	--bs-secondary-bg: #1b1e2b;
 
-  // Soften the primary blue to prevent "neon" glow
-  --bs-primary: #79a3ff;
-  --bs-primary-rgb: 121, 163, 255;
+	// Borders (keep them subtle, not high-contrast)
+	--bs-border-color: #2d324a;
+
+	// Soften the primary blue to prevent "neon" glow
+	--bs-primary: #79a3ff;
+	--bs-primary-rgb: 121, 163, 255;
 }
 
 // Global Card Styling for a "Lifted" look
 .card {
-  background-color: var(--bs-body-tertiary);
-  border: 1px solid var(--bs-border-color);
-  border-radius: 12px; // Slightly rounder for a modern feel
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	background-color: var(--bs-body-tertiary);
+	border: 1px solid var(--bs-border-color);
+	border-radius: 12px; // Slightly rounder for a modern feel
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

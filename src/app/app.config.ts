@@ -16,8 +16,8 @@ export const appConfig: ApplicationConfig = {
 					inject(LoggerService).info(`Outgoing request to: ${req.url}`);
 					return next(req);
 				},
-				authInterceptor
-			])
-		)
-	]
+				authInterceptor,
+			]),
+		),
+	],
 };

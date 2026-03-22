@@ -47,7 +47,8 @@ export class LoggerService {
 	}
 
 	private consoleLog(level: LogLevel, label: string, msg: string, details: any): void {
-		const color = level === LogLevel.ERROR ? 'red' : level === LogLevel.WARN ? 'orange' : 'blue';
+		const color =
+			level === LogLevel.ERROR ? 'red' : level === LogLevel.WARN ? 'orange' : 'blue';
 		console.log(`%c[${label}]`, `color: ${color}; font-weight: bold`, msg, details || '');
 	}
 
@@ -57,12 +58,12 @@ export class LoggerService {
 			message,
 			details: details?.message || JSON.stringify(details),
 			url: window.location.href,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		};
 
 		// We don't pipe/map here because logging should be "fire and forget"
 		this.http.post(this.logApi, payload).subscribe({
-			error: (err) => console.warn('Cloud logging failed', err)
+			error: (err) => console.warn('Cloud logging failed', err),
 		});
 	}
 }

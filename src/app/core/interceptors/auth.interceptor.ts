@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 	let authReq = req;
 	if (token) {
 		authReq = req.clone({
-			setHeaders: { Authorization: `Bearer ${token}` }
+			setHeaders: { Authorization: `Bearer ${token}` },
 		});
 	}
 
@@ -34,6 +34,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 				authService.logout(); // This clears localStorage and redirects to /login
 			}
 			return throwError(() => error);
-		})
+		}),
 	);
 };
