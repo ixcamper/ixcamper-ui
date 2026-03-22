@@ -1,6 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SettingsComponent } from './settings.component';
+import { Component } from '@angular/core';
+import { NavbarComponent } from '../../core/components/navbar/navbar.component';
+
+@Component({
+	selector: 'app-navbar',
+	template: '<div>Mock Navbar</div>',
+})
+class MockNavbarComponent {}
 
 describe('SettingsComponent', () => {
 	let component: SettingsComponent;
@@ -9,7 +16,16 @@ describe('SettingsComponent', () => {
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			imports: [SettingsComponent],
-		}).compileComponents();
+		})
+			.overrideComponent(SettingsComponent, {
+				remove: {
+					imports: [NavbarComponent],
+				},
+				add: {
+					imports: [MockNavbarComponent],
+				},
+			})
+			.compileComponents();
 
 		fixture = TestBed.createComponent(SettingsComponent);
 		component = fixture.componentInstance;
